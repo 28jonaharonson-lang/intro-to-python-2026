@@ -24,6 +24,7 @@ def start():
 def livingRoom():
     global backpack
     os.system('cls' if os.name == 'nt' else 'clear')
+    print("backpack: {}".format(backpack))
     slowText("You are in the living room. There are doors to the kitchen, bedroom, and garden. You can also look for items.")
     slowText("What would you like to do?")
     choice = input().strip().lower()
@@ -41,7 +42,6 @@ def livingRoom():
             choice = input().strip().lower()
             if choice == "yes":
                 backpack.append("oreos")
-                print(backpack)
         time.sleep(2)
         livingRoom()
     else:
@@ -51,11 +51,26 @@ def livingRoom():
 
 def kitchen():
     os.system('cls' if os.name == 'nt' else 'clear')
-    slowText("You are in the kitchen. There is a door to the living room.")
+    print("backpack: {}".format(backpack))
+    slowText("You are in the kitchen. There is a door to the living room and a window outside, which you can try to escape through. You can also look for items.")
     slowText("What would you like to do?")
     choice = input().strip().lower()
     if choice == "living room":
         livingRoom()
+    elif choice == "open window":
+        openWindow()
+    elif choice == "look for items":
+        if searchBackpack(backpack, "paper clip"):
+            slowText("You decided to scan the room. You find nothing.")
+            time.sleep(2)
+            kitchen()
+        else:
+            slowText("You decided to scan the room. You open up a junk drawer and find a paperclip. Do you want to pick it up?")
+            choice = input().strip().lower()
+            if choice == "yes":
+                backpack.append("paper clip")
+        time.sleep(2)
+        kitchen()
     else:
         print("Invalid choice. Please try again.")
         time.sleep(3)
@@ -63,15 +78,53 @@ def kitchen():
 
 def garden():
     os.system('cls' if os.name == 'nt' else 'clear')
-    slowText("You are in the garden. There is a door to the living room.")
+    print("backpack: {}".format(backpack))
+    slowText("You are in the garden. There is a door to the living room. You can also look for items.")
     slowText("What would you like to do?")
     choice = input().strip().lower()
     if choice == "living room":
         livingRoom()
+    elif choice == "look for items":
+        if searchBackpack(backpack, "shovel"):
+            slowText("You decided to scan the room. You find nothing.")
+            time.sleep(2)
+            garden()
+        else:
+            slowText("You decided to scan the room. You find a shovel on the floor. Do you want to pick it up?")
+            choice = input().strip().lower()
+            if choice == "yes":
+                backpack.append("shovel")
+            time.sleep(2)
+            garden()
     else:
         print("Invalid choice. Please try again.")
         time.sleep(3)
         garden()
+
+def bedroom():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("backpack: {}".format(backpack))
+    slowText("You are in the bedroom. There is a door to the living room. You can also look for items.")
+    slowText("What would you like to do?")
+    choice = input().strip().lower()
+    if choice == "living room":
+        livingRoom()
+    elif choice == "look for items":
+        if searchBackpack(backpack, "pillow"):
+            slowText("You decided to scan the room. You find nothing.")
+            time.sleep(2)
+            bedroom()
+        else:
+            slowText("You decided to scan the room. You find a pillow on the bed. Do you want to pick it up?")
+            choice = input().strip().lower()
+            if choice == "yes":
+                backpack.append("pillow")
+                time.sleep(2)
+                bedroom()
+    else:
+        print("Invalid choice. Please try again.")
+        time.sleep(3)
+        bedroom()
 
 def searchBackpack(pack, item):
     #this function should return true if item is inside the list named 'pack'
@@ -80,6 +133,32 @@ def searchBackpack(pack, item):
         if pack[i] == item:
             found = True
     return found
+
+def openWindow():
+    slowText("You decided to try to open the window.")
+    if searchBackpack(backpack, "paper clip") == True:
+        slowText("You use the paperclip to unlock the window, but it still won't budge open. You need to try to break the window with something strong to get out.")
+        if searchBackpack(backpack, "shovel") == False:
+                slowText("You have nothing to break the window with.")
+                time.sleep(2)
+                kitchen()
+        choice = input().strip().lower()
+        if choice == "use shovel":
+            if searchBackpack(backpack, "shovel") == True:
+                slowText("You use the shovel to break the window open, but there is a man outside holding a pillow. In order to escape, you must have a pillow fight.")
+        elif choice == "pillow fight":
+            if searchBackpack(backpack, "pillow") == True:
+                slowText("You have a pillow fight with the man and win, you escape!")
+                time.sleep(3)
+                start()
+            elif searchBackpack(backpack, "pillow") == False:
+                slowText("You have no pillow to fight with and you cannot escape.")
+                time.sleep(2)
+                kitchen()
+    else:
+        slowText("Unfortunately, you can't open the window.")
+        time.sleep(2)
+        kitchen()
 playerName = ""
 backpack = []
 start()
