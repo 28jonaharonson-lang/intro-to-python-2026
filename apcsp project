@@ -17,13 +17,14 @@ def textDelay2(text, delay=1):
 
 def enter():
     global wallet
+    wallet = 100
     os.system('cls' if os.name == 'nt' else 'clear')
     print ("wallet: {}".format(wallet) + "$")
-    textDelay1("You enter a casino, there are 3 different games: A slot machine, a blackjack table, and a roulette wheel. There is also a shop in the casino you can go to. Type which one you want to go to. ")
+    textDelay1("You enter a casino, there are 3 different games: A slot machine, a blackjack table, and a roulette wheel. There is also a shop in the casino you can go to. If your money goes below zero, you lose. Type which one you want to go to. ")
     choice = input().strip().lower()
     if choice == ("slot machine"):
         slot()
-    elif choice == ("blackjack table"):
+    elif choice == ("blackjack"):
         blackjack()
     elif choice == ("roulette wheel"):
         roulette()
@@ -39,35 +40,77 @@ def slot():
     global wallet
     os.system('cls' if os.name == 'nt' else 'clear')
     print ("wallet: {}".format(wallet) + "$")
-    textDelay1("You go to the slot machine, and there are two different prizes: the minor prize where two numbers are the same, and the jackpot where all three numbers are the same. The minor prize pays out 3x, and the jackpot pays out 75x. Type how much moneyyou want to spend.")
-    choice = input().strip().lower()
-    slot1 = random.randint(1, 5)
-    slot2 = random.randint(1, 5)
-    slot3 = random.randint(1, 5)  
-    textDelay2(str(slot1) + str(slot2) + str(slot3))
-    if slot1 == slot2 and slot2 == slot3:
-        wallet = wallet + int(choice)*75
-        textDelay1("You won the jackpot! You won {}".format(int(choice)*75) + "$")
-        time.sleep(3)
-        slot()
-    elif slot1 == slot2 or slot2 == slot3 or slot1 == slot3:
-        wallet = wallet + int(choice)*3
-        textDelay1("You won the minor prize! You won {}".format(int(choice)*3) + "$")
-        time.sleep(3)
-        slot()
+    if wallet > 0:
+        textDelay1("You go to the slot machine, and there are two different prizes: the minor prize where two numbers are the same, and the jackpot where all three numbers are the same. The minor prize pays out 3x, and the jackpot pays out 50x. Type how much moneyyou want to spend. (in dollars)")
+        choice = input().strip().lower()
+        if int(choice) > int(wallet):
+            textDelay1("You do not have that much money.")
+            time.sleep(2)
+            slot()
+        elif int(wallet) >= int(choice):
+            slot1 = random.randint(1, 9)
+            slot2 = random.randint(1, 9)
+            slot3 = random.randint(1, 9)  
+            textDelay2(str(slot1) + str(slot2) + str(slot3))
+            if slot1 == slot2 and slot2 == slot3:
+                wallet = int(choice)*50
+                textDelay1("You won the jackpot! You won {}".format(int(choice)*50) + "$")
+                time.sleep(3)
+                slot()
+            elif slot1 == slot2 or slot2 == slot3 or slot1 == slot3:
+                wallet = int(choice)*3
+                textDelay1("You won the minor prize! You won {}".format(int(choice)*3) + "$")
+                time.sleep(3)
+                slot()
+            else:
+                wallet = wallet - int(choice)
+                textDelay1("You won nothing. You lost {}".format(choice) + "$")
+                time.sleep(2)
+                slot()
+        else:
+            textDelay1("Sorry, I don't understand that.")
+            time.sleep(2)
+            slot()
     else:
-        wallet = wallet - int(choice)
-        textDelay1("You won nothing. You lost {}".format(choice) + "$")
+        textDelay1("Unfortunately, you've gone bankrupt. You lose!")
         time.sleep(2)
-        slot()
+        enter()
+    
+    
     
 
     
-    if int(choice) > int(wallet):
-        textDelay1("You do not have that much money.")
+    
     
 def blackjack():
+    global wallet
+    global cards
     os.system('cls' if os.name == 'nt' else 'clear')
+    print ("wallet: {}".format(wallet) + "$")
+    if wallet > 0:
+        print ("Cards: {}".format(cards))
+        textDelay1("You go to a blackjack table, and there are two other people there. The first round begins-- how much money do you want to put on the game?")
+        choice = input().strip().lower()
+        temp1 = choice
+        cardChoice = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King"]
+        yourCard = random.choice(cardChoice)
+        cards.append(yourCard)
+        p1Card = random.choice(cardChoice)
+        p2Card = random.choice(cardChoice)
+        textDelay1("Everyone gets their first cards, and your first (hidden) card is: {}".format(yourCard))
+        time.sleep(3)
+        
+        yourCard = random.choice(cardChoice)
+        cards.append(yourCard)
+        p1Card = random.choice(cardChoice)
+        p2Card = random.choice(cardChoice)
+        textDelay1("Everyone gets their second cards (visible to all): you get a: {}".format(yourCard))
+        time.sleep(2)
+        textDelay1("Player 1 gets a {}".format(p1Card))
+        time.sleep(2)
+        textDelay1("Player 2 gets a {}".format(p2Card))
+        time.sleep(2)
+
 
 def roulette():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -75,6 +118,14 @@ def roulette():
 def shop():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def searchCards(icards, item):
+    found = False
+    for i in range(len(icards)):
+        if icards[i] == item:
+            found = True
+    return found
+
+cards = []
 
 
 
@@ -88,6 +139,9 @@ def shop():
 
 
 
-wallet = 100
+
+
+
+
 
 enter()
