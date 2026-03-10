@@ -85,31 +85,57 @@ def slot():
 def blackjack():
     global wallet
     global cards
+    global p1Cardsvis
+    global p2Cardsvis
     os.system('cls' if os.name == 'nt' else 'clear')
     print ("wallet: {}".format(wallet) + "$")
     if wallet > 0:
+        cards = cards - temp1
         print ("Cards: {}".format(cards))
-        textDelay1("You go to a blackjack table, and there are two other people there. The first round begins-- how much money do you want to put on the game?")
-        choice = input().strip().lower()
-        temp1 = choice
-        cardChoice = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King"]
-        yourCard = random.choice(cardChoice)
-        cards.append(yourCard)
-        p1Card = random.choice(cardChoice)
-        p2Card = random.choice(cardChoice)
-        textDelay1("Everyone gets their first cards, and your first (hidden) card is: {}".format(yourCard))
-        time.sleep(3)
+        print ("P1Cards (visible cards): {}".format(p1Cardsvis))
+        print ("P2Cards (visible cards): {}".format(p2Cardsvis))
+        cardChoice = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        if searchCards(cards) == True:
+            textDelay1("It is now the third round. Do you wish to get another card? Type yes or no:")
+            choice = input().strip().lower()
+            if choice == "yes":
+                yourCard = random.choice(cardChoice)
+                cards.append(yourCard)
+                time.sleep(2)
+                textDelay1("You got a: {}".format())
+            else:
+                textDelay1("You do not get a card.")
+                time.sleep(2)
+            
+            
+        else:
+            textDelay1("You go to a blackjack table, and there are two other people there. The first round begins-- how much money do you want to put on the game?")
+            choice = input().strip().lower()
+            temp1 = choice
+
+            yourCard = random.choice(cardChoice)
+            cards.append(yourCard)
+
+            p1Card = random.choice(cardChoice)
+            p1Cards.append(p1Card)
+
+            p2Card = random.choice(cardChoice)
+            p2Cards.append(p2Card)
+            textDelay1("Everyone gets their first cards, and your first (hidden) card is: {}".format(yourCard))
+            time.sleep(3)
+            yourCard = random.choice(cardChoice)
+            cards.append(yourCard)
+
+            p1Card = random.choice(cardChoice)
+            p1Cards.append(p1Card)
+
+            p2Card = random.choice(cardChoice)
+            p2Cards.append(p2Card)
+            textDelay1("Everyone gets their second (visible) cards, and your first  {}".format(yourCard))
+            time.sleep(3)
+            
         
-        yourCard = random.choice(cardChoice)
-        cards.append(yourCard)
-        p1Card = random.choice(cardChoice)
-        p2Card = random.choice(cardChoice)
-        textDelay1("Everyone gets their second cards (visible to all): you get a: {}".format(yourCard))
-        time.sleep(2)
-        textDelay1("Player 1 gets a {}".format(p1Card))
-        time.sleep(2)
-        textDelay1("Player 2 gets a {}".format(p2Card))
-        time.sleep(2)
+    
 
 
 def roulette():
@@ -118,14 +144,24 @@ def roulette():
 def shop():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def searchCards(icards, item):
+def searchCards(listcards):
     found = False
-    for i in range(len(icards)):
-        if icards[i] == item:
-            found = True
+    if len(listcards) >= 1:
+        found = True
     return found
 
+
+
+
+    
+
 cards = []
+p1Cards = []
+p2Cards = []
+p1Cardsvis = []
+p2Cardsvis = []
+p1Cardvalue = ()
+p2Cardvalue = {}
 
 
 
