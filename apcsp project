@@ -20,7 +20,7 @@ def enter():
     wallet = 100
     os.system('cls' if os.name == 'nt' else 'clear')
     print ("wallet: {}".format(wallet) + "$")
-    textDelay1("You enter a casino, there are 3 different games: A slot machine, a blackjack table, and a roulette wheel. There is also a shop in the casino you can go to. If your money goes below zero, you lose. Type which one you want to go to. ")
+    textDelay1("You enter a casino, there are 3 different games: A slot machine, a blackjack table, and a roulette wheel. There is also a shop in the casinoyou can go to. If your money goes below zero, you lose. Type which one you want to go to. ")
     choice = input().strip().lower()
     if choice == ("slot machine"):
         slot()
@@ -77,7 +77,7 @@ def slot():
         enter()
     
     
-    
+ 
 
     
     
@@ -85,30 +85,23 @@ def slot():
 def blackjack():
     global wallet
     global cards
+    global p1Cards
+    global p2Cards
     global p1Cardsvis
     global p2Cardsvis
     os.system('cls' if os.name == 'nt' else 'clear')
     print ("wallet: {}".format(wallet) + "$")
     if wallet > 0:
-        cards = cards - temp1
         print ("Cards: {}".format(cards))
         print ("P1Cards (visible cards): {}".format(p1Cardsvis))
         print ("P2Cards (visible cards): {}".format(p2Cardsvis))
+        p1Lost = False
+        p2Lost = False
+        playerHold = False
+        p1Hold = False
+        p2Hold = False
         cardChoice = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        if searchCards(cards) == True:
-            textDelay1("It is now the third round. Do you wish to get another card? Type yes or no:")
-            choice = input().strip().lower()
-            if choice == "yes":
-                yourCard = random.choice(cardChoice)
-                cards.append(yourCard)
-                time.sleep(2)
-                textDelay1("You got a: {}".format())
-            else:
-                textDelay1("You do not get a card.")
-                time.sleep(2)
-            
-            
-        else:
+        if searchCards(cards) == False:
             textDelay1("You go to a blackjack table, and there are two other people there. The first round begins-- how much money do you want to put on the game?")
             choice = input().strip().lower()
             temp1 = choice
@@ -128,11 +121,124 @@ def blackjack():
 
             p1Card = random.choice(cardChoice)
             p1Cards.append(p1Card)
+            p1Cardsvis.append(p1Card)
 
             p2Card = random.choice(cardChoice)
             p2Cards.append(p2Card)
-            textDelay1("Everyone gets their second (visible) cards, and your first  {}".format(yourCard))
-            time.sleep(3)
+            p2Cardsvis.append(p2Card)
+            textDelay1("Everyone gets their second (visible) cards, and your card is: {}".format(yourCard))
+            time.sleep(2)
+            blackjack()
+        elif searchCards(cards) == True:
+            textDelay1("It is now the next round. Do you wish to get another card? Type yes or no:")
+            choice = input().strip().lower()
+            if choice == "yes":
+                yourCard = random.choice(cardChoice)
+                cards.append(yourCard)
+                time.sleep(2)
+                textDelay1("You got a: {}".format(yourCard))
+            else:
+                textDelay1("You do not get a card.")
+                time.sleep(2)
+            if sum(cards) > 21:
+                textDelay1("You went over 21. You lose!")
+                wallet = wallet - int(temp1)
+                cards = []
+                p1Cards = []
+                p1Cardsvis = []
+                p2Cards = []
+                p2Cardsvis = []
+                time.sleep(2)
+                blackjack()
+                
+            if sum(p1Cards) > 0 and sum(p1Cards) < 17:
+                p1Card = random.choice(cardChoice)
+                p1Cards.append(p1Card)
+                p1Cardsvis.append(p1Card)
+                textDelay1("Player 1 pulls a {}".format(p1Card))
+                time.sleep(2)
+            elif sum(p1Cards) > 17 and sum(p1Cards) < 22:
+                textDelay1("Player 1 does not pull a card.")
+                p1Hold = True
+                time.sleep(2)
+            if sum(p2Cards) > 0 and sum(p2Cards) < 17:
+                p2Card = random.choice(cardChoice)
+                p2Cards.append(p2Card)
+                p2Cardsvis.append(p2Card)
+                textDelay1("Player 2 pulls a {}".format(p1Card))
+                time.sleep(2)
+                blackjack()
+            elif sum(p2Cards) > 17 and sum(p2Cards) < 22:
+                textDelay1("Player 2 does not pull a card.")
+                time.sleep(2)
+                p2Hold = True
+                blackjack()
+            if sum(p1Cards) > 21:
+                textDelay1("Player 1 went over 21 and lost.")
+                p1Cardsvis = ["LOST"]
+                p1Lost = True
+                time.sleep(2)
+            if sum(p2Cards) > 21:
+                textDelay1("Player 2 went over 21 and lost.")
+                p2Cardsvis = ["LOST"]
+                p2Lost = True
+                time.sleep(2)
+                blackjack()
+            if p1Lost == True and p2Lost ==True:
+                winnings = int(temp1) * 20
+                wallet = winnings
+                textDelay1("You win the game! You win 20x your money and win {}".format(winnings))
+                time.sleep(2)
+                cards = []
+                p1Cards = []
+                p1Cardsvis = []
+                p2Cards = []
+                p2Cardsvis = []
+                blackjack()
+            if playerHold == True and p1Hold == True and p2Hold == True:
+                textDelay1("Everyone has held their cards. Lets see who is closest to winning!")
+                pSum = 21 - sum(cards)
+                p1Sum = 21 - sum(p1Cards)
+                p2Sum = 21 - sum(p2Cards)
+                textDelay1("Player 1's hand value was: {}".format(sum(p1Cards)))
+                textDelay1("Player 2's hand value was: {}".format(sum(p2Cards)))
+                if pSum < p1Sum and pSum < p2Sum:
+                    winnings = int(temp1) * 20
+                    wallet = winnings
+                    textDelay1("You win! You win {}".format(winnings))
+                    cards = []
+                    p1Cards = []
+                    p1Cardsvis = []
+                    p2Cards = []
+                    p2Cardsvis = []
+                    time.sleep(2)
+                    blackjack()
+                else:
+                    textDelay1("You do not win as you are not closest to 21.")
+                    wallet = wallet - int(temp1)
+                    cards = []
+                    p1Cards = []
+                    p1Cardsvis = []
+                    p2Cards = []
+                    p2Cardsvis = []
+                    time.sleep(2)
+                    blackjack()
+    else:
+        textDelay1("You are broke. You lose the game!")
+        time.sleep(2)
+        enter()
+
+                
+            
+            
+            
+            
+                
+        
+            
+            
+        
+            
             
         
     
@@ -153,15 +259,12 @@ def searchCards(listcards):
 
 
 
-    
-
 cards = []
 p1Cards = []
 p2Cards = []
 p1Cardsvis = []
 p2Cardsvis = []
-p1Cardvalue = ()
-p2Cardvalue = {}
+
 
 
 
